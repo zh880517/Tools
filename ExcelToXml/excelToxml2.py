@@ -72,28 +72,22 @@ class DataTable():
 class TableGen:
     
     def __init__(self, excelFile, outPath):
-        table = xlrd.open_workbook(excelFile)
         print 'export excel file ---', excelFile
+        table = xlrd.open_workbook(excelFile)
         for sheet in table.sheets():
             listStr = sheet.name.split('|')
-            print '   |-- sheet --- ' , sheet.name 
             if len(listStr) == 3:
                 dataTable = DataTable( outPath + listStr[1], sheet, listStr[2])
                 dataTable.ParseExcel()
+                print '\t|-- sheet --- ' , sheet.name 
 
 import sys
+import os
 
-
-"""test = TableGen('table.xml')
-test.Parse(".", ".")"""
-
-if len(sys.argv) == 3:
-    TableGen(sys.argv[1], sys.argv[2])
-    print "gen success!"
-elif len(sys.argv) == 2:
-    TableGen(sys.argv[1], u'./')
-    print "gen success!"
-else:
-    print u"Need to input the correct parameters :(excel file) (xml out path)"
-    print u"like: table.xlsx ./"
-    print u' or  (excel file) like table.xlsx'
+if len(sys.argv) >= 2:
+    if os.path.isdir(sys.argv[1]):
+        for i in range(2, len(sys.argv)):
+            TableGen(sys.argv[i], sys.argv[1])
+    else :
+        for i in range(1, len(sys.argv)):
+            TableGen(sys.argv[i], u'./')
