@@ -9,15 +9,14 @@ import xml.dom.minidom
 
 class DataTable():
     """docstring for tableDes"""
-    def __init__(self, xmlNode):
+    def __init__(self, outFile, sheetName, beginRow):
         self.MapItem = {}
         self.MapType = {}
-        self.Name = xmlNode.getAttribute('name')
-        self.ExcelFile = xmlNode.getAttribute('file')
-        self.ExcelSheet = xmlNode.getAttribute('sheet')
-        self.BeginRow = int(xmlNode.getAttribute('begin_row')) - 1
-        if self.BeginRow <= 0:
-            print("begin_row must big than 1")
+        self.Name = outFile
+        self.ExcelSheet = sheetName
+        self.BeginRow = int(beginRow) - 1
+        if self.BeginRow <= 1:
+            print("begin_row must big than 2")
             print("Error in table %s"%(self.Name))
 
 
@@ -26,13 +25,11 @@ class DataTable():
             self.MapType[item.getAttribute('name')] = item.getAttribute('type')
         '''
 
-    def ParseExcel(self, excelPath, xmlOutPath):
-        xmlFile = open(xmlOutPath+self.Name + ".xml", 'wb')
+    def ParseExcel(self):
+        xmlFile = open(self.Name + ".xml", 'wb')
         xmlFile.write(u'<?xml version="1.0" encoding="utf-8" ?>\n')
         xmlFile.write(u'<root>\n')
-        excelfile = excelPath + self.ExcelFile
-        table = xlrd.open_workbook(excelfile)
-        sheet = table.sheet_by_name(self.ExcelSheet)
+        sheet = self.ExcelSheet
         mapIndexName = {}
         for i in range(0, sheet.ncols):
             cellValue = sheet.row(self.BeginRow -1)[i].value
@@ -74,12 +71,15 @@ class DataTable():
 
 class TableGen:
     
-    def __init__(self, xmlfileName, excelPath, outPath):
-        dom = xml.dom.minidom.parse(xmlfileName)
-        root = dom.documentElement
-        for table in root.getElementsByTagName("table"):
-            dataTable = DataTable(table)
-            dataTable.ParseExcel(excelPath, outPath)
+    def __init__(self, excelFile, outPath):
+        table = xlrd.open_workbook(excelFile)
+        print 'export excel file ---', excelFile
+        for sheet in table.sheets():
+            listStr = sheet.name.split('|')
+            print '   |-- sheet --- ' , sheet.name 
+            if len(listStr) == 3:
+                dataTable = DataTable( outPath + listStr[1], sheet, listStr[2])
+                dataTable.ParseExcel()
 
 import sys
 
@@ -87,10 +87,13 @@ import sys
 """test = TableGen('table.xml')
 test.Parse(".", ".")"""
 
-if len(sys.argv) == 4:
-    test = TableGen(sys.argv[1], sys.argv[2], sys.argv[3])
-    """test.Parse(sys.argv[2], sys.argv[3])"""
+if len(sys.argv) == 3:
+    TableGen(sys.argv[1], sys.argv[2])
+    print "gen success!"
+elif len(sys.argv) == 2:
+    TableGen(sys.argv[1], u'./')
     print "gen success!"
 else:
-    print u"Need to input the correct parameters : (xml file Name) (excel file path) (xml out path)"
-    print u"like: table.xml ./ ./"
+    print u"Need to input the correct parameters :(excel file) (xml out path)"
+    print u"like: table.xlsx ./"
+    print u' or  (excel file) like table.xlsx'
