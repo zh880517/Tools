@@ -5,7 +5,7 @@ sys.setdefaultencoding('utf-8')
 import xlrd
 import types 
 import math
-import xml.dom.minidom
+import os
 
 class DataTable():
     """docstring for tableDes"""
@@ -63,7 +63,8 @@ class DataTable():
                 value = int(value*100)
             elif valueType == u'float':
                 value = float(value)
-        elif type(value) is types.FloatType:
+
+        if type(value) is types.FloatType:
             ret = math.modf(value)
             if ret[0] == 0.0:
                 value = int(value) 
@@ -73,6 +74,9 @@ class TableGen:
     
     def __init__(self, excelFile, outPath):
         print 'export excel file ---', excelFile
+        if os.path.exists(excelFile) == False:
+            print u'file not exist :', excelFile
+            return
         table = xlrd.open_workbook(excelFile)
         for sheet in table.sheets():
             listStr = sheet.name.split('|')
@@ -81,8 +85,6 @@ class TableGen:
                 dataTable.ParseExcel()
                 print '\t|-- sheet --- ' , sheet.name 
 
-import sys
-import os
 
 if len(sys.argv) >= 2:
     if os.path.isdir(sys.argv[1]):
