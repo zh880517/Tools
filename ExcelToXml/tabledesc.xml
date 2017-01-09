@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-    <table name="Levels" file="卡牌.xlsx" sheet="配置表" begin_row="4">
-        <col name="HM_Pro" type="percent"/>
-        <col name="M2_Pro" type="percent"/>
-        <col name="M3_Pro" type="percent"/>
-        <col name="M4_Pro" type="percent"/>
-        <col name="M4_Pro" type="percent"/>
-        <col name="H_Pro" type="percent"/>
-        <col name="C_Pro" type="percent"/>
-        <col name="I_Pro" type="percent"/>
-    </table>
+    <table file="卡牌.xlsx" sheet="配置表" begin_row="5"/>
 </root>
