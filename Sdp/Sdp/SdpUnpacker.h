@@ -424,7 +424,7 @@ public:
 		val = m_data[m_pos] & 0x7f;
 		while (m_data[m_pos + n - 1] > 0x7f)
 		{
-			checksize(1);
+			checksize(n);
 			uint32_t hi = (m_data[m_pos + n] & 0x7f);
 			val |= hi << (7 * n);
 			++n;
@@ -443,7 +443,7 @@ public:
 		val = m_data[m_pos] & 0x7f;
 		while (m_data[m_pos + n - 1] > 0x7f)
 		{
-			checksize(1);
+			checksize(n);
 			uint64_t hi = (m_data[m_pos + n] & 0x7f);
 			val |= hi << (7 * n);
 			++n;
